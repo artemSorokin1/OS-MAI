@@ -1,14 +1,18 @@
-#include "parent.h"
-#include "child.h"
+#include <iostream>
+#include <unistd.h>
+#include <fstream>
+#include "constants.h"
+#include <string>
 
-int parent_process(int fd[2]) {
-    close(fd[1]);
+
+int main() {
     int64_t answer;
-    if (read(fd[0], &answer, sizeof(int64_t)) == -1) {
-        std::cout << "Somthing wrong with read" << std::endl;
+    if (read(fileno(stdin), &answer, sizeof(int64_t)) != 8) {
+        std::cout << "READ_PROBLEM" << '\n'; // с большой вероятностью ошибка здесь 
         return READ_PROBLEM;
     }
-    close(fd[0]);
     std::cout << answer << std::endl;
     return GOOD;
 }
+
+

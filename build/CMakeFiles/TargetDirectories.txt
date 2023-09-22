@@ -1,0 +1,5 @@
+/Users/artemsorokin/CLionProjects/OS/build/CMakeFiles/main.dir
+/Users/artemsorokin/CLionProjects/OS/build/CMakeFiles/child.dir
+/Users/artemsorokin/CLionProjects/OS/build/CMakeFiles/parent.dir
+/Users/artemsorokin/CLionProjects/OS/build/CMakeFiles/edit_cache.dir
+/Users/artemsorokin/CLionProjects/OS/build/CMakeFiles/rebuild_cache.dir

@@ -1,28 +1,29 @@
-#include "child.h"
+#include <iostream>
+#include <unistd.h>
+#include <fstream>
+#include "constants.h"
+#include <cstdlib>
+#include <cstdio>
 
 
-int child_process(int fd[2], std::string &file_name, std::ifstream &file) {
-    close(fd[0]);
-    file.open(file_name, std::ifstream::in);
-    if (!file.is_open()) {
-        std::cout << "Такого файла нет" << std::endl;
-        return NO_SUCH_FILE;
-    } else {
-        int x;
-        int64_t sum = 0;
-        while (file >> x) {
-            sum += x;
+int main() {
+    int64_t sum = 0;
+    char c;
+    std::string s;
+    while(std::getline(std::cin, s)) {
+        sum = 0;
+        std::string res = "";
+        for (char & elem : s) {
+            if (elem == ' ') {
+                sum += stoll(res);
+                res = "";
+            } else res += elem;
         }
-        if (write(fd[1], &sum, sizeof(int64_t)) == -1) {
-            std::cout << "Somthing wrong with write" << std::endl;
+        if (write(fileno(stdout), &sum, sizeof(int64_t)) != 8)
             return WRITE_PROBLEM;
-        }
     }
-    file.close();
-    close(fd[1]);
+    
+    close(fileno(stdin));
 
     return GOOD;
 }
-
-
-
