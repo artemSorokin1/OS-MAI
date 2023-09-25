@@ -1,14 +1,11 @@
 #include <iostream>
 #include <unistd.h>
-#include <sys/wait.h>
 #include <fcntl.h>
 #include <cstdlib>
 #include <cstdio>
 #include "../lib/constants.h"
 
-
-
-// через относительный путь почему-то не работает (../../build/child   ../../build/parent) 
+// запускать из билда
 
 int main() {
     std::string file;
@@ -18,7 +15,7 @@ int main() {
     const char* file_name = file.c_str();
     int out = open(file_name, O_RDONLY );
     if (out == -1) {
-        std::cout << "такого фала нет" << std::endl;
+        std::cout << "такого файла нет" << std::endl;
         return FILE_PROBLEM;
     }
 
@@ -32,7 +29,7 @@ int main() {
         return FORK_PROBLEM;
     } else if (pid == 0) {
         close(fd[0]);
-        const char* path = "/Users/artemsorokin/CLionProjects/OS/build/child";
+        const char* path = "./child";
         if (dup2(fd[1], fileno(stdout)) == -1) {
             return DUP_ERROR;
         }
@@ -47,7 +44,7 @@ int main() {
             std::cout << "dup2_err" << '\n'; 
             return DUP_ERROR;
         }
-        const char* path = "/Users/artemsorokin/CLionProjects/OS/build/parent";
+        const char* path = "./parent";
         if (execl(path, path, NULL) == -1)
             return EXEC_ERROR;
     }
