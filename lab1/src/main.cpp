@@ -16,7 +16,7 @@ int main() {
     std::cin >> file;
     file = "../lab1/" + file;
     const char* file_name = file.c_str();
-    int out = open(file_name, O_WRONLY );
+    int out = open(file_name, O_RDONLY );
     if (out == -1) {
         std::cout << "такого фала нет" << std::endl;
         return FILE_PROBLEM;
