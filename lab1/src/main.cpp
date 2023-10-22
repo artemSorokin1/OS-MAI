@@ -1,20 +1,18 @@
 #include <iostream>
 #include <unistd.h>
 #include <fcntl.h>
-#include <cstdlib>
 #include <cstdio>
 #include "../lib/constants.h"
 
-// запускать из билда
 
 int main() {
     std::string file;
     std::cout << "Введите имя файла: ";
     std::cin >> file;
-    file = "../lab1/" + file;
+    file = "../" + file;
     const char* file_name = file.c_str();
-    int out = open(file_name, O_RDONLY );
-    if (out == -1) {
+    int input = open(file_name, O_RDONLY );
+    if (input == -1) {
         std::cout << "такого файла нет" << std::endl;
         return FILE_PROBLEM;
     }
@@ -23,6 +21,7 @@ int main() {
     if (pipe(fd) == -1) {
         return PIPE_PROBLEM;
     }
+
     pid_t pid = fork();
 
     if (pid == -1) {
@@ -33,7 +32,7 @@ int main() {
         if (dup2(fd[1], fileno(stdout)) == -1) {
             return DUP_ERROR;
         }
-        if (dup2(out, fileno(stdin)) == -1) {
+        if (dup2(input, fileno(stdin)) == -1) {
             return DUP_ERROR;
         }
         if (execl(path, path, NULL) == -1)
