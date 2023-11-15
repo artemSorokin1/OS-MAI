@@ -14,6 +14,8 @@ void text(bool flag) {
 
 typedef char * (*Pointer_to_function)(long);
 
+typedef void (*Pointer_to_cleaner_function)(const char *);
+
 
 using namespace std;
 
@@ -32,6 +34,11 @@ int main() {
 
     Pointer_to_function from_decimal_to_ternary = reinterpret_cast<Pointer_to_function>(dlsym(hdl, "from_decimal_to_ternary"));
     if (from_decimal_to_ternary == nullptr) {
+        throw std::logic_error("lib not loaded");
+    }
+
+    Pointer_to_cleaner_function cleaner = reinterpret_cast<Pointer_to_cleaner_function>(dlsym(hdl, "cleaner"));
+    if (cleaner == nullptr) {
         throw std::logic_error("lib not loaded");
     }
 
@@ -59,23 +66,31 @@ int main() {
 
             operation ^= 1;
             if (operation == 1) {
-                cout << "Число в двоичном представлении: " << from_decimal_to_binary(x) << endl;
+                char * res = from_decimal_to_binary(x);
+                cout << "Число в двоичном представлении: " << res << endl;
+                cleaner(res);
                 text(flag);
             } else {
-                cout << "Число в троичном представлении: " << from_decimal_to_ternary(x) << endl;
+                char * res = from_decimal_to_ternary(x);
+                cout << "Число в троичном представлении: " << res << endl;
+                cleaner(res);
                 text(flag);
             }
         } else if (t == 1) {
             cout << "Введите число, которое хотите перевести(" << help_info << "): ";
             cin >> x;
 
-            cout << "Число в двоичном представлении: " << from_decimal_to_binary(x) << endl;
+            char * res = from_decimal_to_binary(x);
+            cout << "Число в двоичном представлении: " << res << endl;
+            cleaner(res);
             text(flag);
         } else if (t == 2) {
             cout << "Введите число, которое хотите перевести(" << help_info << "): ";
             cin >> x;
 
-            cout << "Число в троичном представлении: " << from_decimal_to_ternary(x) << endl;
+            char * res = from_decimal_to_ternary(x);
+            cout << "Число в троичном представлении: " << res << endl;
+            cleaner(res);
             text(flag);
         } else {
             if (dlclose(hdl) == -1)
