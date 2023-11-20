@@ -1,4 +1,4 @@
-FLAGS = -std=c++20 -Wall -Wextra -pedantic
+FLAGS = -std=c++20 -Wextra -pedantic
 
 program_1: lib_1 exe_1
 

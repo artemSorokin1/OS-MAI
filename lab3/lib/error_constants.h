@@ -1,0 +1,15 @@
+#ifndef LABS_ERROR_CONSTANTS_H
+#define LABS_ERROR_CONSTANTS_H
+
+enum {
+    FILE_ERROR = 1,
+    FSTAT_ERROR = 2,
+    FTRUNC_ERROR = 3,
+    MMAP_ERROR = 4,
+    FORK_ERROR = 5,
+    DUP2_ERROR = 6,
+    MUNMAP_ERROR = 7,
+    CLOSE_ERROR = 8
+};
+
+#endif //LABS_ERROR_CONSTANTS_H
