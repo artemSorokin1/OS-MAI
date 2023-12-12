@@ -3,15 +3,12 @@
 #include <vector>
 #include <fstream>
 
-
 using namespace std;
-
 
 vector<int> result;
 vector<int> clear;
 int32_t part = 0;
 pthread_mutex_t mutex_;
-
 
 typedef struct Info {
     vector<vector<int>> vv;
@@ -49,7 +46,6 @@ void* summ_of_k_arrays(void* args) {
     pthread_exit(nullptr);
 }
 
-
 void compute_with_input_thread(Info_about_input_data* & info) {
     result = clear;
     Timer timer;
@@ -63,7 +59,6 @@ void compute_with_input_thread(Info_about_input_data* & info) {
     }
     part = 0;
 }
-
 
 void compute(int trc, Info_about_input_data * & info) {
     const string path = "../lib/output_data";
@@ -84,7 +79,6 @@ void compute(int trc, Info_about_input_data * & info) {
     }
     part = 0;
 }
-
 
 int main(int argc, char* argv[]) {
     int thread_quantity;
@@ -131,14 +125,12 @@ int main(int argc, char* argv[]) {
     compute(10, info);
     compute(200, info);
 
-
     for (auto & elem : arrays) {
         for (auto & el : elem) {
             cout << el << ' ';
         }
         cout << endl;
     }
-
 
     for (auto & elem : result) {
         cout << elem << ' ';

@@ -1,4 +1,3 @@
-#include <iostream>
 #include "../../../Desktop/Programming/labs/lab5/lib/vector.h"
 
 

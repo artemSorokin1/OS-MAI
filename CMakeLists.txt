@@ -11,3 +11,5 @@ add_subdirectory(lab1)
 
 add_subdirectory(lab3)
 
+add_subdirectory(KP)
+

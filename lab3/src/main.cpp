@@ -7,7 +7,6 @@
 #include <sys/stat.h>
 #include "../lib/error_constants.h"
 
-
 int main(int argc, char* argv[]) {
     std::string file;
     std::cout << "Введите имя файла: ";
