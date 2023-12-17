@@ -11,7 +11,7 @@ set(SOURCE_FILES
     Timer/TimerManager.cpp
 )
 
-add_executable(test main2.cpp ${SOURCE_FILES})
+add_executable(test test.cpp ${SOURCE_FILES})
 add_executable(compute compute.cpp ${SOURCE_FILES})
 add_executable(lab5-7 main.cpp ${SOURCE_FILES})
 

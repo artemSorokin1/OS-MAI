@@ -20,68 +20,90 @@ bool compare(const char arr[], const char * t) {
 int main(int argc, char* argv[]) {
     int tempId = std::stoi(argv[1]);
     zmq::context_t ctx;
-    zmq::socket_t parentSocket(ctx, zmq::socket_type::rep);
+    zmq::socket_t parentSocket(ctx, zmq::socket_type::pair);
     ZMQ::API::connect(parentSocket, tempId);
     parentSocket.set(zmq::sockopt::sndtimeo, 5000);
+    std::vector<std::pair<int, zmq::socket_t*>> children;
 
     while (true) {
-        MessageData * messageData = receiveMessageData(parentSocket);
+        MessageDataNew * messageData = receiveMessageData(parentSocket);
         if (compare(messageData->cmd, "pid")) {
-            auto msg = new MessageData;
-            memcpy(msg->cmd, "OK\0", strlen("OK\0") + 1);
-            sendMessageData<MessageData>(parentSocket, &*msg);
-            delete msg;
-        }
-        if (compare(messageData->cmd, "create")) {
-            auto createData = reinterpret_cast<CreateData*>(messageData);
-            zmq::socket_t newSocket(ctx, zmq::socket_type::req);
-            ZMQ::API::bind(newSocket, createData->newId);
-            pid_t pid = fork();
-            if (pid == -1) {
-                throw std::logic_error("fork problem");
-            } else if (pid == 0) {
-                if (execl("./compute", "./compute", std::to_string(createData->newId).c_str(), nullptr) == -1) {
-                    throw std::logic_error("exec problem");
+            auto MDN = new MessageDataNew;
+            MDN->setCmd("OK");
+            sendMessageData<MessageDataNew>(parentSocket, MDN);
+            delete MDN;
+            continue;
+        } else if (compare(messageData->cmd, "create")) {
+            if (messageData->path.empty()) {
+                pid_t pid = fork();
+                if (pid == -1) {
+                    throw std::logic_error("fork problem");
+                } else if (pid == 0) {
+                    if (execl("./compute", "./compute", std::to_string(messageData->id).c_str(), nullptr) == -1) {
+                        throw std::logic_error("exec problem");
+                    }
+                    return 0;
+                } else {
+                    zmq::socket_t newSocket(ctx, zmq::socket_type::pair);
+                    ZMQ::API::bind(newSocket, messageData->id);
+                    newSocket.set(zmq::sockopt::sndtimeo, 5000);
+                    children.emplace_back(messageData->id, &newSocket);
+                    auto msg = new MessageDataNew;
+                    msg->up = true;
+                    msg->setCmd("OK:" + std::to_string(getpid()));
+                    sendMessageData<MessageData>(parentSocket, msg);
+                    continue;
                 }
             } else {
-                auto msg = new MessageData;
-                memcpy(msg->cmd, ("OK:" + std::to_string(getpid()) + '\0').c_str(), strlen(("OK:" + std::to_string(getpid()) + '\0').c_str()) + 1);
-                sendMessageData<MessageData>(parentSocket, &*msg);
-                delete msg;
+                MessageDataNew* request;
+                int id = messageData->path.front();
+                messageData->path.pop_front();
+                for (auto & soc : children) {
+                    if (id == soc.first) {
+                        sendMessageData<MessageDataNew>(*(soc.second), messageData);
+                        request = receiveMessageData(*(soc.second));
+                        break;
+                    }
+                }
+                sendMessageData<MessageDataNew>(parentSocket, request);
             }
         } else if (compare(messageData->cmd, "exec")) {
-            auto execData = reinterpret_cast<ExecData*>(messageData);
-            if (compare(execData->subcmd, "time")) {
-                double time = execData->node->timer.timeNow();
-                std::string stringTime = std::to_string(time);
-                auto msg = new MessageData;
-                memcpy(msg->cmd, ("OK:" + std::to_string(execData->execNodeId) + ':' + stringTime + '\0').c_str(),
-                          strlen(("OK:" + std::to_string(execData->execNodeId) + ':' + stringTime + '\0').c_str()) + 1);
-                sendMessageData<MessageData>(parentSocket, &*msg);
-                delete msg;
-            } else if (compare(execData->subcmd, "start")) {
-                execData->node->timer.timeStart();
-                auto msg = new MessageData;
-                memcpy(msg->cmd, ("OK:" + std::to_string(execData->execNodeId) + '\0').c_str(),
-                       strlen(("OK:" + std::to_string(execData->execNodeId) + '\0').c_str()) + 1);
-                sendMessageData<MessageData>(parentSocket, &*msg);
-                delete msg;
-            } else if (compare(execData->subcmd, "stop")) {
-                execData->node->timer.timeStop();
-                auto msg = new MessageData;
-                memcpy(msg->cmd, ("OK:" + std::to_string(execData->execNodeId) + '\0').c_str(),
-                       strlen(("OK:" + std::to_string(execData->execNodeId) + '\0').c_str()) + 1);
-                sendMessageData<MessageData>(parentSocket, &*msg);
-                delete msg;
+            if (messageData->path.empty()) {
+                if (compare(messageData->subcmd, "time")) {
+                    double time = messageData->node->timer.timeNow();
+                    std::string stringTime = std::to_string(time);
+                    auto msg = new MessageDataNew;
+                    msg->setCmd("OK:" + std::to_string(messageData->id) + ":" + stringTime);
+                    sendMessageData<MessageDataNew>(parentSocket, msg);
+                    delete msg;
+                } else if (compare(messageData->subcmd, "start")) {
+                    messageData->node->timer.timeStart();
+                    auto msg = new MessageDataNew;
+                    msg->setCmd("OK:" + std::to_string(messageData->id));
+                    sendMessageData<MessageDataNew>(parentSocket, msg);
+                    delete msg;
+                } else if (compare(messageData->subcmd, "stop")) {
+                    messageData->node->timer.timeStop();
+                    auto msg = new MessageDataNew;
+                    msg->setCmd("OK:" + std::to_string(messageData->id));
+                    sendMessageData<MessageDataNew>(parentSocket, msg);
+                    delete msg;
+                }
+            } else {
+                zmq::socket_t tempSocket(ctx, zmq::socket_type::pair);
+                int id = messageData->path.front();
+                ZMQ::API::connect(tempSocket, id);
+                tempSocket.set(zmq::sockopt::sndtimeo, 5000);
+                messageData->path.pop_front();
+                sendMessageData<MessageDataNew>(tempSocket, messageData);
+                ZMQ::API::disconnect(tempSocket, id);
             }
         } else if (compare(messageData->cmd, "exit")) {
-
+            // unbind -> kill
         } else if (compare(messageData->cmd, "kill")) {
 
         } else if (compare(messageData->cmd, "pingall")) {
 
-        } else {
-            std::cout << "Invalid argument" << std::endl;
         }
     }
 

@@ -1,8 +1,8 @@
 #include "tree.h"
 
-
 Tree::Tree() {
     _root = new Node(-1);
+    size = 1;
 }
 
 Node *Tree::findNode(const int id, Node *node) const {
@@ -23,10 +23,27 @@ void Tree::treeDeleter(Node *node) {
     if (!node) {
         return;
     }
-    for (auto & n : node->son) {
+    Node * tempNode = node;
+    for (auto & n : tempNode->son) {
         treeDeleter(n);
     }
+    std::string arg = std::to_string(node->pid);
+//    if (execl("./killer.sh", "./killer.sh", arg.c_str(), nullptr) == -1) {
+//        throw std::logic_error("exec problem");
+//    }
     delete node;
+    size--;
+}
+
+void Tree::deleteNode(Node *node) {
+    for (auto it = node->parent->son.begin(); it != node->parent->son.end(); ++it) {
+        if (*it == node) {
+            node->parent->son.erase(it);
+            return;
+        }
+    }
+    treeDeleter(node);
+    size--;
 }
 
 Tree::~Tree() noexcept {
@@ -55,18 +72,5 @@ void Tree::insertNode(int id, int parent) {
         return;
     Node* newNode = new Node(id, father);
     father->son.push_back(newNode);
-}
-
-bool Tree::deleteNode(int id) {
-    Node* find = findNode(id, _root);
-    if (!find || id == -1) {
-        return false;
-    }
-    std::vector<Node*> children = find->parent->son;
-    for (auto it = children.begin(); it != children.end(); ++it) {
-        if (*it == find) {
-            children.erase(it);
-        }
-    }
-    return true;
+    size++;
 }

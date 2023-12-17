@@ -293,29 +293,29 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/lab5-7.dir/build.make CMakeFiles/lab5-7.dir/main.cpp.s
 .PHONY : main.cpp.s
 
-main2.o: main2.cpp.o
-.PHONY : main2.o
+test.o: test.cpp.o
+.PHONY : test.o
 
 # target to build an object file
-main2.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/main2.cpp.o
-.PHONY : main2.cpp.o
+test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.cpp.o
+.PHONY : test.cpp.o
 
-main2.i: main2.cpp.i
-.PHONY : main2.i
+test.i: test.cpp.i
+.PHONY : test.i
 
 # target to preprocess a source file
-main2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/main2.cpp.i
-.PHONY : main2.cpp.i
+test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.cpp.i
+.PHONY : test.cpp.i
 
-main2.s: main2.cpp.s
-.PHONY : main2.s
+test.s: test.cpp.s
+.PHONY : test.s
 
 # target to generate assembly for a file
-main2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/main2.cpp.s
-.PHONY : main2.cpp.s
+test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.cpp.s
+.PHONY : test.cpp.s
 
 # Help Target
 help:
@@ -343,9 +343,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
-	@echo "... main2.o"
-	@echo "... main2.i"
-	@echo "... main2.s"
+	@echo "... test.o"
+	@echo "... test.i"
+	@echo "... test.s"
 .PHONY : help
 
 

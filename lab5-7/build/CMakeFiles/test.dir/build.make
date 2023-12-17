@@ -69,19 +69,19 @@ include CMakeFiles/test.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/test.dir/flags.make
 
-CMakeFiles/test.dir/main2.cpp.o: CMakeFiles/test.dir/flags.make
-CMakeFiles/test.dir/main2.cpp.o: /Users/artemsorokin/CLionProjects/OS/lab5-7/main2.cpp
-CMakeFiles/test.dir/main2.cpp.o: CMakeFiles/test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/artemsorokin/CLionProjects/OS/lab5-7/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test.dir/main2.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test.dir/main2.cpp.o -MF CMakeFiles/test.dir/main2.cpp.o.d -o CMakeFiles/test.dir/main2.cpp.o -c /Users/artemsorokin/CLionProjects/OS/lab5-7/main2.cpp
+CMakeFiles/test.dir/test.cpp.o: CMakeFiles/test.dir/flags.make
+CMakeFiles/test.dir/test.cpp.o: /Users/artemsorokin/CLionProjects/OS/lab5-7/test.cpp
+CMakeFiles/test.dir/test.cpp.o: CMakeFiles/test.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/artemsorokin/CLionProjects/OS/lab5-7/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test.dir/test.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test.dir/test.cpp.o -MF CMakeFiles/test.dir/test.cpp.o.d -o CMakeFiles/test.dir/test.cpp.o -c /Users/artemsorokin/CLionProjects/OS/lab5-7/test.cpp
 
-CMakeFiles/test.dir/main2.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test.dir/main2.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/artemsorokin/CLionProjects/OS/lab5-7/main2.cpp > CMakeFiles/test.dir/main2.cpp.i
+CMakeFiles/test.dir/test.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test.dir/test.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/artemsorokin/CLionProjects/OS/lab5-7/test.cpp > CMakeFiles/test.dir/test.cpp.i
 
-CMakeFiles/test.dir/main2.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test.dir/main2.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/artemsorokin/CLionProjects/OS/lab5-7/main2.cpp -o CMakeFiles/test.dir/main2.cpp.s
+CMakeFiles/test.dir/test.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test.dir/test.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/artemsorokin/CLionProjects/OS/lab5-7/test.cpp -o CMakeFiles/test.dir/test.cpp.s
 
 CMakeFiles/test.dir/ZeroMQ_API/ZeroMQ_API.cpp.o: CMakeFiles/test.dir/flags.make
 CMakeFiles/test.dir/ZeroMQ_API/ZeroMQ_API.cpp.o: /Users/artemsorokin/CLionProjects/OS/lab5-7/ZeroMQ_API/ZeroMQ_API.cpp
@@ -127,7 +127,7 @@ CMakeFiles/test.dir/Timer/TimerManager.cpp.s: cmake_force
 
 # Object files for target test
 test_OBJECTS = \
-"CMakeFiles/test.dir/main2.cpp.o" \
+"CMakeFiles/test.dir/test.cpp.o" \
 "CMakeFiles/test.dir/ZeroMQ_API/ZeroMQ_API.cpp.o" \
 "CMakeFiles/test.dir/Tree/tree.cpp.o" \
 "CMakeFiles/test.dir/Timer/TimerManager.cpp.o"
@@ -135,7 +135,7 @@ test_OBJECTS = \
 # External object files for target test
 test_EXTERNAL_OBJECTS =
 
-test: CMakeFiles/test.dir/main2.cpp.o
+test: CMakeFiles/test.dir/test.cpp.o
 test: CMakeFiles/test.dir/ZeroMQ_API/ZeroMQ_API.cpp.o
 test: CMakeFiles/test.dir/Tree/tree.cpp.o
 test: CMakeFiles/test.dir/Timer/TimerManager.cpp.o

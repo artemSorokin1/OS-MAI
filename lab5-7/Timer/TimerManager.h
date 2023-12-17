@@ -1,7 +1,6 @@
 #include <iostream>
 #include <chrono>
 
-
 class LocalTimer {
 private:
     std::chrono::time_point<std::chrono::steady_clock> _start, _end;

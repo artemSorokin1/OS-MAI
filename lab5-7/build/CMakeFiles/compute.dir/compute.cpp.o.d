@@ -738,7 +738,6 @@ CMakeFiles/compute.dir/compute.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/include/c++/v1/sstream \
   /Users/artemsorokin/CLionProjects/OS/lab5-7/ZeroMQ_API/../Tree/tree.h \
   /Users/artemsorokin/CLionProjects/OS/lab5-7/ZeroMQ_API/../Tree/../Timer/TimerManager.h \
-  /Users/artemsorokin/CLionProjects/OS/lab5-7/Tree/tree.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/include/unistd.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/include/sys/unistd.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/include/sys/_types/_posix_vdisable.h \
@@ -746,4 +745,6 @@ CMakeFiles/compute.dir/compute.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/include/sys/select.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/include/sys/_select.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/include/sys/_types/_uuid_t.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/include/gethostuuid.h
+  /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/include/gethostuuid.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/include/c++/v1/deque \
+  /Users/artemsorokin/CLionProjects/OS/lab5-7/Tree/tree.h

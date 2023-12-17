@@ -3,6 +3,32 @@
 #include <zmq.hpp>
 #include "../Tree/tree.h"
 
+typedef struct MessageDataNew {
+    char cmd[128];
+    char subcmd[128];
+    int parentId = 0;
+    int id = 0;
+    Node* node = nullptr;
+    std::deque<int> path;
+    bool up = false;
+
+    MessageDataNew() = default;
+
+    void setCmd(std::string && s) {
+        memcpy(cmd, (s + '\0').c_str(), strlen((s + '\0').c_str()) + 1);
+    }
+    void setCmd(const std::string & s) {
+        memcpy(cmd, (s + '\0').c_str(), strlen((s + '\0').c_str()) + 1);
+    }
+    void setSubCmd(std::string && s) {
+        memcpy(subcmd, (s + '\0').c_str(), strlen((s + '\0').c_str()) + 1);
+    }
+    void setSubCmd(const std::string & s) {
+        memcpy(subcmd, (s + '\0').c_str(), strlen((s + '\0').c_str()) + 1);
+    }
+
+} MessageDataNew;
+
 typedef struct MD {
     char cmd[128];
 } MessageData;
@@ -42,12 +68,13 @@ namespace ZMQ {
 
 }
 
-MessageData* receiveMessageData(zmq::socket_t & socket);
+MessageDataNew* receiveMessageData(zmq::socket_t & socket);
 
 template <class Data>
-void sendMessageData(zmq::socket_t &socket, MessageData* md) {
+void sendMessageData(zmq::socket_t &socket, MessageDataNew* md) {
     zmq::message_t message(sizeof(Data));
     memcpy(message.data(), md, sizeof(Data));
-    socket.send(message);
+    socket.send(message, zmq::send_flags::none);
 }
+
 
