@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
     } else {
         Tree tree;
         zmq::context_t ctx;
-        zmq::socket_t mainSocket(ctx, zmq::socket_type::pair);
+        zmq::socket_t mainSocket(ctx, zmq::socket_type::req);
         ZMQ::API::bind(mainSocket, mainId);
         mainSocket.set(zmq::sockopt::sndtimeo, 5000);
 
@@ -79,14 +79,17 @@ int main(int argc, char* argv[]) {
                 std::vector<std::pair<int, int>> routes(tree.size);
                 int index = 1;
                 findPathHelper(tree, tree._root, routes, index);
-                std::deque<int> path = findPath(parent, routes);
+                std::deque<int> p = findPath(parent, routes);
                 if (parent == -1) {
                     parent = 1;
                 }
                 auto MDN = new MessageDataNew;
                 MDN->id = newId;
                 MDN->parentId = parent;
-                MDN->path = path;
+//                MDN->path = path;
+                for (int i = 0; i < p.size(); ++i) {
+                    MDN->path[i] = p[i];
+                }
                 MDN->setCmd("create");
                 sendMessageData<MessageDataNew>(mainSocket, MDN);
                 const MessageDataNew* MDN_req = receiveMessageData(mainSocket);
@@ -96,7 +99,7 @@ int main(int argc, char* argv[]) {
                 } else {
                     tree.insertNode(newId, parent);
                 }
-//                tree.print();
+                tree.print();
                 delete MDN;
             } else if (inputCommand == "exit") {
 //                auto killData = new KillData;

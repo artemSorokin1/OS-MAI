@@ -12,40 +12,26 @@ int endpoint(std::string &s) {
     return stoi(t);
 }
 int PORT = 1000;
+std::string addr = "tcp://127.0.0.1:5252";
 
 int main() {
 
     zmq::context_t ctx;
-    zmq::socket_t socket1(ctx, zmq::socket_type::req);
-    ZMQ::API::bind(socket1, 101);
-    zmq::socket_t socket1c(ctx, zmq::socket_type::rep);
-    ZMQ::API::connect(socket1c, 101);
-    zmq::socket_t socket2(ctx, zmq::socket_type::req);
-    ZMQ::API::bind(socket2, 102);
-    zmq::socket_t socket2c(ctx, zmq::socket_type::rep);
-    ZMQ::API::connect(socket2c, 102);
-    zmq::socket_t socket3(ctx, zmq::socket_type::req);
-    ZMQ::API::bind(socket3, 103);
-    zmq::socket_t socket3c(ctx, zmq::socket_type::rep);
-    ZMQ::API::connect(socket3c, 103);
+    zmq::socket_t socket1(ctx, zmq::socket_type::pair);
+    socket1.bind(addr);
+    zmq::socket_t socket1c(ctx, zmq::socket_type::pair);
+    socket1c.connect(addr);
+
+    std::vector<std::pair<int, zmq::socket_t*>> vec;
+    vec.push_back({1, &socket1});
     auto msg = new MessageDataNew;
-    msg->setCmd("OK");
-    sendMessageData<MessageDataNew>(socket1, msg);
-    msg = receiveMessageData(socket1c);
-    sendMessageData<MessageDataNew>(socket2, msg);
-    msg = receiveMessageData(socket2c);
-    sendMessageData<MessageDataNew>(socket3, msg);
-    msg = receiveMessageData(socket3c);
-    msg->setCmd("NOK");
+    msg->setCmd("Hello");
+    sendMessageData<MessageDataNew>(*vec[0].second, msg);
+    auto reply = receiveMessageData(socket1c);
+    std::cout << reply->cmd << std::endl;
+    delete msg;
 
-    sendMessageData<MessageDataNew>(socket3c, msg);
-    receiveMessageData(socket3);
-    sendMessageData<MessageDataNew>(socket2c, msg);
-    receiveMessageData(socket2);
-    sendMessageData<MessageDataNew>(socket1c, msg);
-    receiveMessageData(socket1);
-
-    std::cout << msg->cmd << '\n';
-
+    socket1.unbind(addr);
+    socket1c.disconnect(addr);
     return 0;
 }

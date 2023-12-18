@@ -49,7 +49,7 @@ void ZMQ::API::unbind(zmq::socket_t & socket,
 
 MessageDataNew* receiveMessageData(zmq::socket_t & socket) {
     zmq::message_t message;
-    bool request;
+    bool request = false;
     try {
         request = socket.recv(&message);
     } catch (...) {
@@ -57,7 +57,13 @@ MessageDataNew* receiveMessageData(zmq::socket_t & socket) {
     }
     if (!request)
         throw std::logic_error("Problem with receive message " + socket.get(zmq::sockopt::last_endpoint));
-    auto md = (MessageDataNew*)message.data();
+    auto md = reinterpret_cast<MessageDataNew*>(message.data());
     return md;
+}
+
+MessageDataNew::MessageDataNew() {
+    for (int i = 0; i < 20; ++i) {
+        path[i] = -1;
+    }
 }
 
