@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     zmq::socket_t parentSocket(ctx, zmq::socket_type::rep);
     ZMQ::API::connect(parentSocket, tempId);
     parentSocket.set(zmq::sockopt::sndtimeo, 5000);
-    std::vector<std::pair<int, zmq::socket_t*>> children;
+    std::vector<std::pair<int, zmq::socket_t>> children;
 
     while (true) {
         MessageDataNew * messageData = receiveMessageData(parentSocket);
@@ -47,8 +47,7 @@ int main(int argc, char* argv[]) {
                     zmq::socket_t newSocket(ctx, zmq::socket_type::req);
                     ZMQ::API::bind(newSocket, messageData->id);
                     newSocket.set(zmq::sockopt::sndtimeo, 5000);
-                    auto pis = std::make_pair(messageData->id, &newSocket);
-                    children.push_back(pis);
+                    children.emplace_back(messageData->id, std::move(newSocket));
                     auto msg = new MessageDataNew;
                     msg->setCmd("OK:" + std::to_string(getpid()));
                     sendMessageData<MessageData>(parentSocket, msg);
@@ -61,9 +60,9 @@ int main(int argc, char* argv[]) {
                 for (auto & soc : children) {
                     if (id == soc.first) {
                         // ошибка здесь
-                        sendMessageData<MessageDataNew>(*soc.second, messageData);
+                        sendMessageData<MessageDataNew>(soc.second, messageData);
                         // и здесь
-                        sendMessageData<MessageDataNew>(parentSocket, receiveMessageData(*soc.second));
+                        sendMessageData<MessageDataNew>(parentSocket, receiveMessageData(soc.second));
                         break;
                     }
                 }

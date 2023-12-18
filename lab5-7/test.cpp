@@ -22,16 +22,16 @@ int main() {
     zmq::socket_t socket1c(ctx, zmq::socket_type::pair);
     socket1c.connect(addr);
 
-    std::vector<std::pair<int, zmq::socket_t*>> vec;
-    vec.push_back({1, &socket1});
+    std::vector<std::pair<int, zmq::socket_t>> vec;
+    vec.emplace_back(1, std::move(socket1));
     auto msg = new MessageDataNew;
     msg->setCmd("Hello");
-    sendMessageData<MessageDataNew>(*vec[0].second, msg);
+    sendMessageData<MessageDataNew>(vec[0].second, msg);
     auto reply = receiveMessageData(socket1c);
     std::cout << reply->cmd << std::endl;
     delete msg;
 
-    socket1.unbind(addr);
-    socket1c.disconnect(addr);
+//    socket1.unbind(addr);
+//    socket1c.disconnect(addr);
     return 0;
 }
