@@ -32,6 +32,7 @@ int main(int argc, char* argv[]) {
             MDN->setCmd("OK");
             sendMessageData<MessageDataNew>(parentSocket, MDN);
             delete MDN;
+            MDN = nullptr;
             continue;
         } else if (compare(messageData->cmd, "create")) {
             if (messageData->path[messageData->index] == -1) {
@@ -50,8 +51,9 @@ int main(int argc, char* argv[]) {
                     children.emplace_back(messageData->id, std::move(newSocket));
                     auto msg = new MessageDataNew;
                     msg->setCmd("OK:" + std::to_string(getpid()));
-                    sendMessageData<MessageData>(parentSocket, msg);
+                    sendMessageData<MessageDataNew>(parentSocket, msg);
                     delete msg;
+                    msg = nullptr;
                     continue;
                 }
             } else {
@@ -59,51 +61,54 @@ int main(int argc, char* argv[]) {
                 messageData->index++;
                 for (auto & soc : children) {
                     if (id == soc.first) {
-                        // ошибка здесь
                         sendMessageData<MessageDataNew>(soc.second, messageData);
-                        // и здесь
                         sendMessageData<MessageDataNew>(parentSocket, receiveMessageData(soc.second));
                         break;
                     }
                 }
             }
         } else if (compare(messageData->cmd, "exec")) {
-//            if (messageData->path.empty()) {
-//                if (compare(messageData->subcmd, "time")) {
-//                    double time = messageData->node->timer.timeNow();
-//                    std::string stringTime = std::to_string(time);
-//                    auto msg = new MessageDataNew;
-//                    msg->setCmd("OK:" + std::to_string(messageData->id) + ":" + stringTime);
-//                    sendMessageData<MessageDataNew>(parentSocket, msg);
-//                    delete msg;
-//                } else if (compare(messageData->subcmd, "start")) {
-//                    messageData->node->timer.timeStart();
-//                    auto msg = new MessageDataNew;
-//                    msg->setCmd("OK:" + std::to_string(messageData->id));
-//                    sendMessageData<MessageDataNew>(parentSocket, msg);
-//                    delete msg;
-//                } else if (compare(messageData->subcmd, "stop")) {
-//                    messageData->node->timer.timeStop();
-//                    auto msg = new MessageDataNew;
-//                    msg->setCmd("OK:" + std::to_string(messageData->id));
-//                    sendMessageData<MessageDataNew>(parentSocket, msg);
-//                    delete msg;
-//                }
-//            } else {
-//                zmq::socket_t tempSocket(ctx, zmq::socket_type::pair);
-//                int id = messageData->path.front();
-//                ZMQ::API::connect(tempSocket, id);
-//                tempSocket.set(zmq::sockopt::sndtimeo, 5000);
-//                messageData->path.pop_front();
-//                sendMessageData<MessageDataNew>(tempSocket, messageData);
-//                ZMQ::API::disconnect(tempSocket, id);
-//            }
+            if (messageData->path[messageData->index] == -1) {
+                if (compare(messageData->subcmd, "time")) {
+                    double time = messageData->node->timer.timeNow();
+                    std::string stringTime = std::to_string(time);
+                    auto msg = new MessageDataNew;
+                    msg->setCmd("OK:" + std::to_string(messageData->id) + ":" + stringTime);
+                    sendMessageData<MessageDataNew>(parentSocket, msg);
+                    delete msg;
+                    msg = nullptr;
+                } else if (compare(messageData->subcmd, "start")) {
+                    messageData->node->timer.timeStart();
+                    auto msg = new MessageDataNew;
+                    msg->setCmd("OK:" + std::to_string(messageData->id));
+                    sendMessageData<MessageDataNew>(parentSocket, msg);
+                    delete msg;
+                    msg = nullptr;
+                } else if (compare(messageData->subcmd, "stop")) {
+                    messageData->node->timer.timeStop();
+                    auto msg = new MessageDataNew;
+                    msg->setCmd("OK:" + std::to_string(messageData->id));
+                    sendMessageData<MessageDataNew>(parentSocket, msg);
+                    delete msg;
+                    msg = nullptr;
+                }
+            } else {
+                int id = messageData->path[messageData->index];
+                messageData->index++;
+                for (auto & soc : children) {
+                    if (id == soc.first) {
+                        sendMessageData<MessageDataNew>(soc.second, messageData);
+                        sendMessageData<MessageDataNew>(parentSocket, receiveMessageData(soc.second));
+                        break;
+                    }
+                }
+            }
         } else if (compare(messageData->cmd, "exit")) {
             // unbind -> kill
         } else if (compare(messageData->cmd, "kill")) {
 
         } else if (compare(messageData->cmd, "pingall")) {
-
+            // обрабатывать все это в блоке try и если прилетит исключение - добавлять в массив ид ноды и всех ее детей
         }
     }
 

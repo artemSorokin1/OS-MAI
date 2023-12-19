@@ -30,31 +30,6 @@ typedef struct MessageDataNew {
 
 } MessageDataNew;
 
-typedef struct MD {
-    char cmd[128];
-} MessageData;
-
-typedef struct CD : public MessageData {
-    int parentId;
-    int newId;
-} CreateData;
-
-typedef struct PD : public MessageData {
-    int newId;
-} PidData;
-
-typedef struct ExitD : public MessageData {} ExitData;
-
-typedef struct ExecD : public MessageData {
-    int execNodeId;
-    char subcmd[16];
-    Node* node;
-} ExecData;
-
-typedef struct KD : public MessageData {
-    int id;
-} KillData;
-
 namespace ZMQ {
     class API {
     public:

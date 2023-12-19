@@ -86,7 +86,6 @@ int main(int argc, char* argv[]) {
                 auto MDN = new MessageDataNew;
                 MDN->id = newId;
                 MDN->parentId = parent;
-//                MDN->path = path;
                 for (int i = 0; i < p.size(); ++i) {
                     MDN->path[i] = p[i];
                 }
@@ -135,34 +134,30 @@ int main(int argc, char* argv[]) {
             } else if (inputCommand == "exec") {
                 int id;
                 std::cin >> id;
-                std::string subcmd;
+                std::string subcmd{""};
                 std::cin >> subcmd;
                 Node* node = tree.findNode(id, tree._root);
                 if (!node) {
                     std::cout << "Invalid argument" << std::endl;
                     continue;
                 }
+                std::vector<std::pair<int, int>> routes(tree.size);
+                int index = 1;
+                findPathHelper(tree, tree._root, routes, index);
+                std::deque<int> p = findPath(id, routes);
                 auto MDN_EXEC = new MessageDataNew;
                 MDN_EXEC->setCmd("exec");
                 MDN_EXEC->setSubCmd(subcmd);
                 MDN_EXEC->id = id;
                 MDN_EXEC->node = node;
+                for (int i = 0; i < p.size(); ++i) {
+                    MDN_EXEC->path[i] = p[i];
+                }
                 sendMessageData<MessageDataNew>(mainSocket, MDN_EXEC);
                 const MessageDataNew * msg = receiveMessageData(mainSocket);
                 std::cout << msg->cmd << '\n';
                 delete MDN_EXEC;
-//                auto execData = new ExecData;
-//                execData->node = node;
-//                memcpy(execData->cmd, "exec\0", strlen("exec\0") + 1);
-//                memcpy(execData->subcmd, (subcmd + '\0').c_str(), strlen((subcmd + '\0').c_str()) + 1);
-//                execData->execNodeId = id;
-//                zmq::socket_t socketId(ctx, zmq::socket_type::req);
-//                ZMQ::API::bind(socketId, id);
-//                socketId.set(zmq::sockopt::sndtimeo, 5000);
-//                sendMessageData<ExecData>(socketId, &*execData); // OK TODO mainSocket -> socketId отдаю через mq определенному процессу данные, чтобы именно он выполнил программу
-//                const MessageData * md = receiveMessageData(socketId);
-//                std::cout << md->cmd << std::endl;
-//                ZMQ::API::unbind(socketId, id);
+
             } else if (inputCommand == "pingall") {
 
             }
