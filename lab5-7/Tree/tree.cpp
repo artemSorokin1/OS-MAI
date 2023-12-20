@@ -74,3 +74,19 @@ void Tree::insertNode(int id, int parent) {
     father->son.push_back(newNode);
     size++;
 }
+
+void Tree::treeToArrayHelper(Node *node, std::vector<int> &vec) {
+    if (!node) {
+        return;
+    }
+    vec.push_back(node->id);
+    for (auto & child : node->son) {
+        treeToArrayHelper(child, vec);
+    }
+}
+
+std::vector<int> Tree::treeToArray() {
+    std::vector<int> array;
+    treeToArrayHelper(this->_root, array);
+    return array;
+}

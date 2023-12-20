@@ -55,8 +55,10 @@ MessageDataNew* receiveMessageData(zmq::socket_t & socket) {
     } catch (...) {
         request = false;
     }
-    if (!request)
-        throw std::logic_error("Problem with receive message " + socket.get(zmq::sockopt::last_endpoint));
+    if (!request) {
+//        throw std::runtime_error("Problem with receive message " + socket.get(zmq::sockopt::last_endpoint));
+        return nullptr;
+    }
     auto md = reinterpret_cast<MessageDataNew*>(message.data());
     return md;
 }
@@ -65,5 +67,19 @@ MessageDataNew::MessageDataNew() {
     for (int i = 0; i < 20; ++i) {
         path[i] = -1;
     }
+}
+
+bool compare(const char arr[], const char * t) {
+    int index = 0;
+    while (arr[index] != '\0' && t[index] != '\0') {
+        if (arr[index] != t[index]) {
+            return false;
+        }
+        index++;
+    }
+    if (arr[index] != t[index]) {
+        return false;
+    }
+    return true;
 }
 

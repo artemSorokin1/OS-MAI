@@ -58,6 +58,8 @@ void sendMessageData(zmq::socket_t &socket, MessageDataNew* md) {
     }
 }
 
+bool compare(const char arr[], const char * t);
+
 
 
 

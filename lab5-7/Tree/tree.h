@@ -24,6 +24,7 @@ public:
     Node *findNode(const int id, Node * node) const;
     void treeDeleter(Node * node);
     void printWithNode(Node * node);
+    void treeToArrayHelper(Node* node, std::vector<int> & vec);
 public:
     Tree();
     ~Tree() noexcept;
@@ -32,6 +33,7 @@ public:
     void insertNode(int id, int parent = -1);
     void print();
     void deleteNode(Node* node);
+    std::vector<int> treeToArray();
 
 };
 

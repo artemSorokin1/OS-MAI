@@ -3,20 +3,6 @@
 #include <unistd.h>
 #include <string>
 
-bool compare(const char arr[], const char * t) {
-    int index = 0;
-    while (arr[index] != '\0' && t[index] != '\0') {
-        if (arr[index] != t[index]) {
-            return false;
-        }
-        index++;
-    }
-    if (arr[index] != t[index]) {
-        return false;
-    }
-    return true;
-}
-
 int main(int argc, char* argv[]) {
     int tempId = std::stoi(argv[1]);
     zmq::context_t ctx;
@@ -62,8 +48,17 @@ int main(int argc, char* argv[]) {
                 for (auto & soc : children) {
                     if (id == soc.first) {
                         sendMessageData<MessageDataNew>(soc.second, messageData);
-                        sendMessageData<MessageDataNew>(parentSocket, receiveMessageData(soc.second));
-                        break;
+                        auto reply = receiveMessageData(soc.second);
+                        if (!reply) {
+                            auto sendToParent = new MessageDataNew;
+                            sendToParent->setCmd("Error");
+                            sendMessageData<MessageDataNew>(parentSocket, sendToParent);
+                            delete sendToParent;
+                            break;
+                        } else {
+                            sendMessageData<MessageDataNew>(parentSocket, reply);
+                            break;
+                        }
                     }
                 }
             }
@@ -98,8 +93,17 @@ int main(int argc, char* argv[]) {
                 for (auto & soc : children) {
                     if (id == soc.first) {
                         sendMessageData<MessageDataNew>(soc.second, messageData);
-                        sendMessageData<MessageDataNew>(parentSocket, receiveMessageData(soc.second));
-                        break;
+                        auto reply = receiveMessageData(soc.second);
+                        if (!reply) {
+                            auto sendToParent = new MessageDataNew;
+                            sendToParent->setCmd("Error");
+                            sendMessageData<MessageDataNew>(parentSocket, sendToParent);
+                            delete sendToParent;
+                            break;
+                        } else {
+                            sendMessageData<MessageDataNew>(parentSocket, reply);
+                            break;
+                        }
                     }
                 }
             }
@@ -108,7 +112,32 @@ int main(int argc, char* argv[]) {
         } else if (compare(messageData->cmd, "kill")) {
 
         } else if (compare(messageData->cmd, "pingall")) {
-            // обрабатывать все это в блоке try и если прилетит исключение - добавлять в массив ид ноды и всех ее детей
+            if (messageData->path[messageData->index] == -1) {
+                auto msg = new MessageDataNew;
+                msg->setCmd("Exist");
+                sendMessageData<MessageDataNew>(parentSocket, msg);
+                delete msg;
+                msg = nullptr;
+            } else {
+                int id = messageData->path[messageData->index];
+                messageData->index++;
+                for (auto & soc : children) {
+                    if (id == soc.first) {
+                        sendMessageData<MessageDataNew>(soc.second, messageData);
+                        auto reply = receiveMessageData(soc.second);
+                        if (!reply) {
+                            auto sendToParent = new MessageDataNew;
+                            sendToParent->setCmd(std::to_string(messageData->id));
+                            sendMessageData<MessageDataNew>(parentSocket, sendToParent);
+                            delete sendToParent;
+                            break;
+                        } else {
+                            sendMessageData<MessageDataNew>(parentSocket, reply);
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 

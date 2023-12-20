@@ -1,5 +1,6 @@
 #include "ZeroMQ_API/ZeroMQ_API.h"
 #include <unistd.h>
+#include <set>
 
 
 void findPathHelper(const Tree & tree, Node* curNode, std::vector<std::pair<int, int>> & routes, int &index) {
@@ -100,6 +101,7 @@ int main(int argc, char* argv[]) {
                 }
                 tree.print();
                 delete MDN;
+                MDN = nullptr;
             } else if (inputCommand == "exit") {
 //                auto killData = new KillData;
 //                memcpy(killData->cmd, "kill\0", strlen("kill\0") + 1);
@@ -157,9 +159,36 @@ int main(int argc, char* argv[]) {
                 const MessageDataNew * msg = receiveMessageData(mainSocket);
                 std::cout << msg->cmd << '\n';
                 delete MDN_EXEC;
-
             } else if (inputCommand == "pingall") {
-
+                std::vector<int> treeArray;
+                treeArray = tree.treeToArray();
+                std::vector<int> result;
+                for (auto & id : treeArray) {
+                    auto MDN_ping = new MessageDataNew;
+                    MDN_ping->setCmd("pingall");
+                    std::vector<std::pair<int, int>> routes(tree.size);
+                    int index = 1;
+                    findPathHelper(tree, tree._root, routes, index);
+                    std::deque<int> p = findPath(id, routes);
+                    for (int i = 0; i < p.size(); ++i) {
+                        MDN_ping->path[i] = p[i];
+                    }
+                    MDN_ping->id = id;
+                    sendMessageData<MessageDataNew>(mainSocket, MDN_ping);
+                    const MessageDataNew * msg = receiveMessageData(mainSocket);
+                    if (!compare(msg->cmd, "Exist")) {
+                        result.push_back(std::stoi(msg->cmd));
+                    }
+                    delete MDN_ping;
+                }
+                if (result.empty()) {
+                    std::cout << -1;
+                } else {
+                    for (auto & elem : result) {
+                        std::cout << elem << ' ';
+                    }
+                }
+                std::cout << std::endl;
             }
         }
     }
