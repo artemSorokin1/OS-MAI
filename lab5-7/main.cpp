@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <set>
 
-
 void findPathHelper(const Tree & tree, Node* curNode, std::vector<std::pair<int, int>> & routes, int &index) {
     routes[0] = {-1, tree._root->id};
     if (!curNode) {
@@ -19,7 +18,6 @@ void findPathHelper(const Tree & tree, Node* curNode, std::vector<std::pair<int,
         findPathHelper(tree, n, routes, index);
     }
 }
-
 
 std::deque<int> findPath(int id, std::vector<std::pair<int, int>> & routes) {
     std::deque<int> path;
@@ -50,7 +48,7 @@ int main(int argc, char* argv[]) {
         zmq::context_t ctx;
         zmq::socket_t mainSocket(ctx, zmq::socket_type::req);
         ZMQ::API::bind(mainSocket, mainId);
-        mainSocket.set(zmq::sockopt::sndtimeo, 5000);
+        mainSocket.set(zmq::sockopt::sndtimeo, 2000);
 
         auto MDN_pid = new MessageDataNew;
         MDN_pid->setCmd("pid");
@@ -69,14 +67,13 @@ int main(int argc, char* argv[]) {
                 int parent;
                 std::cin >> parent;
                 if (tree.idAlreadyExist(newId)) {
-                    std::cout << "Node already exsist\n";
+                    std::cout << "Already exist\n";
                     continue;
                 }
                 if (!tree.idAlreadyExist(parent)) {
-                    std::cout << "No fathers node\n";
+                    std::cout << "Parent not found\n";
                     continue;
                 }
-                // нахожу путь до родительской ноды и отправляю его вместе с сообщением
                 std::vector<std::pair<int, int>> routes(tree.size);
                 int index = 1;
                 findPathHelper(tree, tree._root, routes, index);
@@ -102,37 +99,6 @@ int main(int argc, char* argv[]) {
                 tree.print();
                 delete MDN;
                 MDN = nullptr;
-            } else if (inputCommand == "exit") {
-//                auto killData = new KillData;
-//                memcpy(killData->cmd, "kill\0", strlen("kill\0") + 1);
-//                killData->id = mainId;
-//                sendMessageData<KillData>(mainSocket, &*killData);
-//                const MessageData * md = receiveMessageData(mainSocket);
-//                bool equal = strcmp(md->cmd, "OK");
-//                if (equal) {
-//                    ZMQ::API::unbind(mainSocket, mainId);
-//                } else {
-//                    std::cout << md->cmd << std::endl;
-//                }
-//                delete killData;
-//                exit(0);
-            } else if (inputCommand == "kill") {
-//                int id;
-//                std::cin >> id;
-//                if (!tree.idAlreadyExist(id)) {
-//                    std::cout << "id already exist\n";
-//                } else {
-//                    auto kd = new KillData;
-//                    memcpy(kd->cmd, "kill\0", strlen("kill\0") + 1);
-//                    kd->id = id;
-//                    sendMessageData<KillData>(mainSocket, &*kd);
-//                    const MessageData * md = receiveMessageData(mainSocket);
-//                    std::cout << md->cmd << std::endl;
-//                    if (id == 1) {
-//                        ZMQ::API::unbind(mainSocket, mainId);
-//                    }
-//                    delete kd;
-//                }
             } else if (inputCommand == "exec") {
                 int id;
                 std::cin >> id;

@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
     zmq::context_t ctx;
     zmq::socket_t parentSocket(ctx, zmq::socket_type::rep);
     ZMQ::API::connect(parentSocket, tempId);
-    parentSocket.set(zmq::sockopt::sndtimeo, 5000);
+    parentSocket.set(zmq::sockopt::sndtimeo, 2000);
     std::vector<std::pair<int, zmq::socket_t>> children;
 
     while (true) {
@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
                 } else {
                     zmq::socket_t newSocket(ctx, zmq::socket_type::req);
                     ZMQ::API::bind(newSocket, messageData->id);
-                    newSocket.set(zmq::sockopt::sndtimeo, 5000);
+                    newSocket.set(zmq::sockopt::sndtimeo, 2000);
                     children.emplace_back(messageData->id, std::move(newSocket));
                     auto msg = new MessageDataNew;
                     msg->setCmd("OK:" + std::to_string(getpid()));
@@ -140,6 +140,4 @@ int main(int argc, char* argv[]) {
             }
         }
     }
-
-    return 0;
 }
