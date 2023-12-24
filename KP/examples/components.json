@@ -29,6 +29,12 @@
       "prev_id": 1,
       "cmd": "./timer",
       "output": "timer_output.log"
+    },
+    {
+      "id": 6,
+      "prev_id": 7,
+      "cmd": "./timer",
+      "output": "timer_output.log"
     }
   ]
 }

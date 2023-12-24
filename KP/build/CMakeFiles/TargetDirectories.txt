@@ -1,0 +1,4 @@
+/Users/artemsorokin/CLionProjects/OS/KP/build/CMakeFiles/main.dir
+/Users/artemsorokin/CLionProjects/OS/KP/build/CMakeFiles/timer.dir
+/Users/artemsorokin/CLionProjects/OS/KP/build/CMakeFiles/edit_cache.dir
+/Users/artemsorokin/CLionProjects/OS/KP/build/CMakeFiles/rebuild_cache.dir
