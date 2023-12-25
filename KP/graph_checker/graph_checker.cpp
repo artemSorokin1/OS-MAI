@@ -97,5 +97,28 @@ void Graph_checker::check(Parce_data & parce_data) {
     }
 }
 
+void count_parents(Parce_data & parce_data) {
+    for (auto & job : parce_data.json_data) {
+        int temp_id = job.id - 1;
+        int cnt = 0;
+        for (auto & children : parce_data.g) {
+            for (auto & child : children) {
+                if (temp_id== child) {
+                    cnt++;
+                }
+            }
+        }
+        job.num_parents = cnt;
+    }
+}
+
+size_t count_children(int u, Parce_data & pd) {
+    return pd.g[u - 1].size();
+}
+
+vector<int> get_children(int u, Parce_data & parce_data) {
+    return parce_data.g[u - 1];
+}
+
 
 

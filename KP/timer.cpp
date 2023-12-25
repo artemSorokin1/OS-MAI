@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
     }
     int job_id = stoi(argv[1]);
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    std::cout << "Job with id = " << job_id << "I've been working" << endl;
+    std::cout << "Job with id = " << job_id << " has worked" << endl;
 
     return 0;
 }

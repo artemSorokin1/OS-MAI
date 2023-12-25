@@ -15,14 +15,15 @@ class Json_data {
 public:
     int id;
     int prev_id;
-    std::string cmd;
-    std::string output;
-    int semaphore_name;
-    int num_parents;
-    int num_completed_parents;
+    string cmd;
+    string output;
+    string semaphore_name;
+    int num_parents = 0;
+    int num_completed_parents = 0;
     int num_semaphores;
     int num_completed_semaphores;
     bool semaphore;
+    unordered_map<string, int> sem_name_to_degree;
 
 };
 
