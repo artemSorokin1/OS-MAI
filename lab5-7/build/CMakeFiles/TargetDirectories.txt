@@ -1,5 +1,0 @@
-/Users/artemsorokin/CLionProjects/OS/lab5-7/build/CMakeFiles/test.dir
-/Users/artemsorokin/CLionProjects/OS/lab5-7/build/CMakeFiles/compute.dir
-/Users/artemsorokin/CLionProjects/OS/lab5-7/build/CMakeFiles/lab5-7.dir
-/Users/artemsorokin/CLionProjects/OS/lab5-7/build/CMakeFiles/edit_cache.dir
-/Users/artemsorokin/CLionProjects/OS/lab5-7/build/CMakeFiles/rebuild_cache.dir
