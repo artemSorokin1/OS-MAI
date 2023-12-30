@@ -1,62 +1,66 @@
 {
   "jobs": [
     {
-      "id": 8,
+      "id": 1,
       "prev_id": -1,
       "cmd": "./timer",
-      "output": "timer_output.log"
+      "output": "timer_output.log",
+      "sem": {
+        "name": "name",
+        "degree": 1
+      }
     },
     {
-      "id": 5,
+      "id": 2,
       "prev_id": -1,
       "cmd": "./timer",
       "output": "timer_output.log"
     },
     {
       "id": 3,
-      "prev_id": 8,
+      "prev_id": 1,
       "cmd": "./timer",
       "output": "timer_output.log"
     },
     {
       "id": 4,
-      "prev_id": 8,
+      "prev_id": 1,
       "cmd": "./timer",
       "output": "timer_output.log"
     },
     {
-      "id": 1,
+      "id": 5,
+      "prev_id": 2,
+      "cmd": "./timer",
+      "output": "timer_output.log"
+    },
+    {
+      "id": 6,
+      "prev_id": 3,
+      "cmd": "./timer",
+      "output": "timer_output.log"
+    },
+    {
+      "id": 6,
+      "prev_id": 4,
+      "cmd": "./timer",
+      "output": "timer_output.log"
+    },
+    {
+      "id": 6,
       "prev_id": 5,
       "cmd": "./timer",
       "output": "timer_output.log"
     },
     {
       "id": 7,
-      "prev_id": 1,
+      "prev_id": 6,
       "cmd": "./timer",
       "output": "timer_output.log"
     },
     {
-      "id": 7,
-      "prev_id": 3,
-      "cmd": "./timer",
-      "output": "timer_output.log"
-    },
-    {
-      "id": 7,
-      "prev_id": 4,
-      "cmd": "./timer",
-      "output": "timer_output.log"
-    },
-    {
-      "id": 10,
-      "prev_id": 7,
-      "cmd": "./timer",
-      "output": "timer_output.log"
-    },
-    {
-      "id": 2,
-      "prev_id": 7,
+      "id": 8,
+      "prev_id": 6,
       "cmd": "./timer",
       "output": "timer_output.log"
     }

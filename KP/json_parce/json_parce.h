@@ -17,13 +17,10 @@ public:
     int prev_id;
     string cmd;
     string output;
-    string semaphore_name;
+    string sem_name;
     int num_parents = 0;
     int num_completed_parents = 0;
-    int num_semaphores;
-    int num_completed_semaphores;
     bool semaphore;
-    unordered_map<string, int> sem_name_to_degree;
 
 };
 
@@ -32,6 +29,7 @@ public:
     graph g;
     graph g_undirected;
     std::vector<Json_data> json_data;
+    unordered_map<string, int> sem_name_to_degree;
 
 };
 

@@ -81,8 +81,17 @@ int main(int argc, char* argv[]) {
                 if (parent == -1) {
                     parent = 1;
                 }
+
+                if (parent == 1) {
+                    tree.insertNode(newId, -1);
+                } else {
+                    tree.insertNode(newId, parent);
+                }
+                Node* node = tree.findNode(newId, tree._root);
+
                 auto MDN = new MessageDataNew;
                 MDN->id = newId;
+                MDN->node = node;
                 MDN->parentId = parent;
                 for (int i = 0; i < p.size(); ++i) {
                     MDN->path[i] = p[i];
@@ -91,12 +100,7 @@ int main(int argc, char* argv[]) {
                 sendMessageData<MessageDataNew>(mainSocket, MDN);
                 const MessageDataNew* MDN_req = receiveMessageData(mainSocket);
                 std::cout << MDN_req->cmd << std::endl;
-                if (parent == 1) {
-                    tree.insertNode(newId, -1);
-                } else {
-                    tree.insertNode(newId, parent);
-                }
-                tree.print();
+//                tree.print();
                 delete MDN;
                 MDN = nullptr;
             } else if (inputCommand == "exec") {

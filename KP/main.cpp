@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <csignal>
 #include <pthread.h>
+#include <chrono>
+#include <thread>
 
 pthread_mutex_t mutex_;
 
@@ -10,7 +12,7 @@ typedef struct {
     Parce_data* parce_data;
 } thread_data;
 
-void* dfs_start_job(void* pthread_data) {
+void* dfs_scheduler(void* pthread_data) {
     auto data = (thread_data*)pthread_data;
     pthread_mutex_lock(&mutex_);
     bool return_flag = false;
@@ -20,14 +22,26 @@ void* dfs_start_job(void* pthread_data) {
     }
     pthread_mutex_unlock(&mutex_);
 
-//    if (data->parce_data.json_data[data->temp_id - 1].semaphore) {
-//        // if (data->parce_data.semophore_compare[data->parce_data.semophore_name] == 0) {
-//        // return flag = true;
-//        // }
-//    }
+    if (data->parce_data->json_data[data->temp_id - 1].semaphore) {
+        while (true) {
+            pthread_mutex_lock(&mutex_);
+            if (data->parce_data->sem_name_to_degree[data->parce_data->json_data[data->temp_id - 1].sem_name]) {
+                data->parce_data->sem_name_to_degree[data->parce_data->json_data[data->temp_id - 1].sem_name]--;
+                pthread_mutex_unlock(&mutex_);
+                break;
+            }
+            pthread_mutex_unlock(&mutex_);
+            this_thread::sleep_for(chrono::milliseconds(200));
+        }
+    }
 
     if (return_flag) {
         return nullptr;
+    }
+
+    int fd[2];
+    if (pipe(fd) == -1) {
+        throw std::runtime_error("some problem with pipe");
     }
 
     pid_t pid = fork();
@@ -38,6 +52,9 @@ void* dfs_start_job(void* pthread_data) {
         int id = data->temp_id;
         const std::string path = data->parce_data->json_data[data->temp_id - 1].cmd;
         if (execl(path.c_str(), path.c_str(), to_string(id).c_str(), nullptr)) {
+            close(fd[0]);
+            pid_t child_pid = getpid();
+            write(fd[1], &child_pid, sizeof(pid_t));
             cerr << "Exec problem" << endl;
             exit(1);
         }
@@ -48,25 +65,20 @@ void* dfs_start_job(void* pthread_data) {
 
         if (WIFSIGNALED(status)) {
             // дочерний процесс закончился с ошибкой
+            close(fd[1]);
+            pid_t child_pid;
+            read(fd[0], &child_pid, sizeof(pid_t));
+            kill(child_pid, SIGTERM);
             cerr << "Job ended with error\n";
-            // передать ид дочернего процесса и убить его kill(pid, SIGTERM);
             exit(1);
         }
         if (WIFEXITED(status)) {
             // дочерний процесс закончился без ошибки
-            // увеличить кол-во семофоров с таким именем, запустить всех детей в новых потоках
-            // создаю потоки на всех детей и запускаюсь для детей
+            pthread_mutex_lock(&mutex_);
+            data->parce_data->sem_name_to_degree[data->parce_data->json_data[data->temp_id - 1].sem_name]++;
+            pthread_mutex_unlock(&mutex_);
+
             vector<int> children = get_children(data->temp_id, *data->parce_data);
-            // увеличеваем количество завершенных родителей у всех детей
-//            pthread_mutex_lock(&mutex_);
-//            for (const int & child : children) {
-//                for (auto & job : data->parce_data->json_data) {
-//                    if (job.id - 1 == child) {
-//                        ++job.num_completed_parents;
-//                    }
-//                }
-//            }
-//            pthread_mutex_unlock(&mutex_);
             size_t cnt_children = count_children(data->temp_id, *data->parce_data);
             int cnt_threads = (int)cnt_children;
             void *memory_for_threads = ::operator new(cnt_children * sizeof(pthread_t));
@@ -82,7 +94,7 @@ void* dfs_start_job(void* pthread_data) {
             }
             pthread_mutex_unlock(&mutex_);
             for (int i = 0; i < cnt_threads; ++i) {
-                pthread_create(&threads[i], nullptr, dfs_start_job, &data_for_childes_thread[i]);
+                pthread_create(&threads[i], nullptr, dfs_scheduler, &data_for_childes_thread[i]);
             }
             for (int i = 0; i < cnt_threads; ++i) {
                 pthread_join(threads[i], nullptr);
@@ -95,7 +107,7 @@ void* dfs_start_job(void* pthread_data) {
 
 int main() {
     Parce_data pd;
-    pd = Json_parser::parce("../data2.json");
+    pd = Json_parser::parce("../examples/semaphore.json");
 
     Graph_checker::check(pd);
     count_parents(pd);
@@ -123,16 +135,12 @@ int main() {
     }
     pthread_mutex_init(&mutex_, nullptr);
     for (int i = 0; i < cnt_start_jobs; i++) {
-        pthread_create(&threads[i], nullptr, dfs_start_job, &data[i]);
+        pthread_create(&threads[i], nullptr, dfs_scheduler, &data[i]);
     }
 
     for (int i = 0; i < cnt_start_jobs; i++) {
         pthread_join(threads[i], nullptr);
     }
-
-//    for (auto & job : pd.json_data) {
-//        cout << job.id << ' ' << job.num_completed_parents << endl;
-//    }
 
     cout << "End" << endl;
 

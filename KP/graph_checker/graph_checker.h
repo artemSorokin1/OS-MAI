@@ -12,7 +12,7 @@ enum {
 };
 
 class Graph_checker {
-public:
+private:
     static void dfs_connectivity_component(int u, const graph & g, vector<int> & vis);
     static bool check_cycle(Parce_data & parce_data);
     static int connectivity_component(Parce_data & parce_data);

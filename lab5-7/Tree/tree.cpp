@@ -28,9 +28,9 @@ void Tree::treeDeleter(Node *node) {
         treeDeleter(n);
     }
     std::string arg = std::to_string(node->pid);
-//    if (execl("./killer.sh", "./killer.sh", arg.c_str(), nullptr) == -1) {
-//        throw std::logic_error("exec problem");
-//    }
+    if (execl("./killer.sh", "./killer.sh", arg.c_str(), nullptr) == -1) {
+        throw std::logic_error("exec problem");
+    }
     delete node;
     size--;
 }

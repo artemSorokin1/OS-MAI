@@ -16,7 +16,7 @@ struct Node {
 };
 
 class Tree {
-public:
+public: // private
     Node *_root;
     int size;
 

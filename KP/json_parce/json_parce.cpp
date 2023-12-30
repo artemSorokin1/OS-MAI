@@ -12,6 +12,7 @@ Parce_data Json_parser::parce(const std::string &file_path) {
     Parce_data parce_data;
     json array_of_jobs = json_input_data["jobs"];
     parce_data.json_data.resize(array_of_jobs.size());
+    unordered_map<string, int> sem_name_to_degree;
     int i = 0;
 
     // считываем данные из json в массив
@@ -22,8 +23,10 @@ Parce_data Json_parser::parce(const std::string &file_path) {
         parce_data.json_data[i].output = job["output"];
         if (job.count("sem")) {
             parce_data.json_data[i].semaphore = true;
-            parce_data.json_data[i].semaphore_name = job["sem"]["name"];
-            parce_data.json_data[i].num_semaphores = job["sem"]["degree"];
+            string sem_name = job["sem"]["name"];;
+            int sem_degre = job["sem"]["degree"];
+            sem_name_to_degree[sem_name] = sem_degre;
+            parce_data.json_data[i].sem_name  = sem_name;
         }
         i++;
     }
@@ -62,6 +65,7 @@ Parce_data Json_parser::parce(const std::string &file_path) {
 
     std::vector<Json_data> new_jd;
 
+    parce_data.sem_name_to_degree = sem_name_to_degree;
     parce_data.g = g;
     parce_data.g_undirected = g_undirected;
 

@@ -89,6 +89,7 @@ int main(int argc, char* argv[]) {
         cout << "Введите количество потоков: ";
         cin >> thread_quantity;
     }
+    pthread_mutex_init(&mutex_, nullptr);
     int k;
     cout << "Введите количесво массивов: ";
     cin >> k;
@@ -124,18 +125,6 @@ int main(int argc, char* argv[]) {
     compute(9, info);
     compute(10, info);
     compute(200, info);
-
-    for (auto & elem : arrays) {
-        for (auto & el : elem) {
-            cout << el << ' ';
-        }
-        cout << endl;
-    }
-
-    for (auto & elem : result) {
-        cout << elem << ' ';
-    }
-    cout << endl;
 
     delete info;
 

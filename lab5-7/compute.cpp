@@ -22,21 +22,33 @@ int main(int argc, char* argv[]) {
             continue;
         } else if (compare(messageData->cmd, "create")) {
             if (messageData->path[messageData->index] == -1) {
+                int fd[2];
+                if (pipe(fd) == -1) {
+                    throw std::runtime_error("some problem with pipe");
+                }
                 pid_t pid = fork();
                 if (pid == -1) {
                     throw std::logic_error("fork problem");
                 } else if (pid == 0) {
+                    close(fd[0]);
+                    pid_t child_pid = getpid();
+                    write(fd[1], &child_pid, sizeof(pid_t));
                     if (execl("./compute", "./compute", std::to_string(messageData->id).c_str(), nullptr) == -1) {
                         throw std::logic_error("exec problem");
                     }
                     return 0;
                 } else {
+                    close(fd[1]);
+                    pid_t child_pid;
+                    read(fd[0], &child_pid, sizeof(pid_t));
+                    messageData->node->pid = child_pid;
+
                     zmq::socket_t newSocket(ctx, zmq::socket_type::req);
                     ZMQ::API::bind(newSocket, messageData->id);
                     newSocket.set(zmq::sockopt::sndtimeo, 2000);
                     children.emplace_back(messageData->id, std::move(newSocket));
                     auto msg = new MessageDataNew;
-                    msg->setCmd("OK:" + std::to_string(getpid()));
+                    msg->setCmd("OK:" + std::to_string(child_pid));
                     sendMessageData<MessageDataNew>(parentSocket, msg);
                     delete msg;
                     msg = nullptr;
@@ -107,10 +119,6 @@ int main(int argc, char* argv[]) {
                     }
                 }
             }
-        } else if (compare(messageData->cmd, "exit")) {
-            // unbind -> kill
-        } else if (compare(messageData->cmd, "kill")) {
-
         } else if (compare(messageData->cmd, "pingall")) {
             if (messageData->path[messageData->index] == -1) {
                 auto msg = new MessageDataNew;
